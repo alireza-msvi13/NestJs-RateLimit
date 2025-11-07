@@ -9,6 +9,8 @@ import { ContactQueryDto } from './dto/sort-contact.dto';
 import { ServerResponse } from 'src/common/dto/server-response.dto';
 // import { MailService } from '../mail/mail.service';
 import { SortContactOption } from './enum/contact.enum';
+import { parseUserAgent } from '../rate-limit/utils/user-agent.utils';
+import express from 'express';
 @Injectable()
 export class ContactService {
   constructor(
@@ -21,9 +23,16 @@ export class ContactService {
 
   async create(
     createContactDto: CreateContactDto,
-    identifier: string,
+    req: express.Request,
   ): Promise<ServerResponse> {
     const { name, email, phone, message } = createContactDto;
+
+    const userId = req?.user && req.user['id'];
+    const ip = req.ip;
+    const rawUA = req.headers['user-agent'] || '';
+    const ua = parseUserAgent(rawUA);
+    const identifier = userId ?? `${ip}:${ua.browser}:${ua.os}:${ua.device}`;
+
     const contact = this.contactRepository.create({
       identifier,
       name,
