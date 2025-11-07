@@ -1,8 +1,16 @@
-import { Injectable } from '@nestjs/common';
-
+import { HttpStatus, Injectable } from '@nestjs/common';
 @Injectable()
 export class AppService {
-  getHello(): string {
-    return 'Hello World!';
+  getHealth() {
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'Welcome! Use /v1 for API endpoints.',
+    };
+  }
+  headHealth() {
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'Welcome! Use /v1 for API endpoints.',
+    };
   }
 }
